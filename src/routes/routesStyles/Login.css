@@ -1,15 +1,18 @@
-
 .modal {
   position: absolute;
   top: 20vh;
   left: calc(50% - 10rem);
   width: 18rem;
-  height: 10rem;
+  height: 12rem;
   background-color: aliceblue;
   padding: 1rem;
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   animation: slide-down 300ms ease-out forwards;
+}
+.modal p {
+  color: red;
+  text-align: center;
 }
 
 @keyframes slide-down {
@@ -39,7 +42,6 @@
 }
 
 .credentialsLogin {
-  
   position: relative;
   left: 20%;
   height: 30px;

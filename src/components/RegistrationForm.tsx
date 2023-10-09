@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../GlobalCSS/Global.css';
 import './componentsStyles/RegistrationForm.css';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-function RegistrationForm() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [repeatPasswordError, setRepeatPasswordError] = useState('');
 
-  const handlePasswordChange = (e: { target: { value: any } }) => {
+function RegistrationForm() {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    password: '',
+    repeatPassword: '',
+    email: '',
+  });
+
+  const [passwordError, setPasswordError] = useState('');
+
+
+  const handleInputChange = (e:any) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handlePasswordChange = (e:any) => {
     const newPassword = e.target.value;
     const containsNumber = /\d/.test(newPassword);
     const containsSpecialCharacter = /[!@#$%^&;<>.?~]/.test(newPassword);
@@ -22,43 +30,38 @@ function RegistrationForm() {
         'Password must contain at least one number and one special character.'
       );
     } else {
-      setPasswordError(''); // Clears error if password valid
+      setPasswordError('');
     }
 
-    setPassword(newPassword);
+    setFormData({ ...formData, password: newPassword });
   };
 
-  const handleRepeatPasswordChange = (e: { target: { value: any } }) => {
+  const handleRepeatPasswordChange = (e:any) => {
     const newRepeatPassword = e.target.value;
-    setRepeatPassword(newRepeatPassword);
-
-    if (newRepeatPassword !== password) {
-      setRepeatPasswordError('Passwords do not match.');
-    } else {
-      setRepeatPasswordError(''); // need to check this
-    }
+    setFormData({ ...formData, repeatPassword: newRepeatPassword });
   };
 
   const submitForm = async () => {
-    const myData = {
-      firstName,
-      lastName,
-      password,
-      email,
-    };
+    if(formData.password !== formData.repeatPassword){
+      setPasswordError("Passwords don't match. ");
+      return;
+    }
 
-    console.log('myData', myData);
+    const {repeatPassword, ...requestData} = formData;
+    // console.log('formData', requestData);
 
     const result = await fetch('http://localhost:3001/v1/users/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(myData),
+      body: JSON.stringify(requestData),
     });
+
     const json = await result.json();
     console.log(json);
   };
+
   return (
     <div className='backimage'>
       <div className='registration-modal'>
@@ -66,67 +69,57 @@ function RegistrationForm() {
           className='username'
           type='text'
           placeholder='First Name'
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          name='firstName'
+          value={formData.firstName}
+          onChange={handleInputChange}
         />
         <input
           className='username'
           type='text'
           placeholder='Last Name'
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          name='lastName'
+          value={formData.lastName}
+          onChange={handleInputChange}
         />
         <input
           className='username'
           type='text'
           placeholder='Email@email.com'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name='email'
+          value={formData.email}
+          onChange={handleInputChange}
         />
         <input
           className='password'
           type='password'
           placeholder='Password'
-          value={password}
+          value={formData.password}
           onChange={handlePasswordChange}
         />
         <input
           className='password'
           type='password'
           placeholder='Repeat Password'
-          value={repeatPassword}
+          value={formData.repeatPassword}
           onChange={handleRepeatPasswordChange}
         />
 
-        <button
-          className='submit'
-          onClick={submitForm}>
-          <Link
-            to='/login'
-            style={{
-              textDecoration: 'none',
-              color: 'black',
-            }}>
+        <button className='submit' onClick={submitForm}>
+          <Link to='/login' style={{ textDecoration: 'none', color: 'black' }}>
             Submit Registration
           </Link>
         </button>
-        <button className='toMain'> 
-          <Link
-            to='/login'
-            style={{
-              textDecoration: 'none',
-              color: 'black',
-            }}>
+
+        <button className='toMain'>
+          <Link to='/login' style={{ textDecoration: 'none', color: 'black' }}>
             Back to Login. &rarr;
           </Link>
         </button>
+
         {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
       </div>
     </div>
   );
 }
-export default RegistrationForm;
-//if submit registration successful -> send message "successful registration", redirect in 3 seconds/or you can go back to main page to login
-//if submit registration !successful -> error message.
 
-//The "required" attribute only works on form submit and since your input has no form the browser does not know what to validate on submit.
+export default RegistrationForm;

@@ -7,11 +7,10 @@ function ForgottenPassword() {
   const [email, setEmail] = useState('');
   const [response, setResponse] = useState(true);
   const [message, setMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   async function responseHandler() {
     try {
-      const response = await fetch('http://localhost:3001/v1/mail ', {
+      const response = await fetch('http://localhost:3001/v1/mail/ ', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,9 +22,6 @@ function ForgottenPassword() {
         setMessage(
           'If the e-mail exists, you will receive a message with your password '
         );
-      } else {
-        setResponse(false);
-        setErrorMessage('Email can not be empty');
       }
     } catch (error: any) {
       console.error('Network error:', error.message);
@@ -35,7 +31,7 @@ function ForgottenPassword() {
     <div>
       <div className='backimage'>
         <div className='forgottenP-modal'>
-          {response && (
+          {response ? (
             <div className='content'>
               <input
                 required
@@ -53,8 +49,7 @@ function ForgottenPassword() {
                 <Link to='/login'>Back &rarr;</Link>
               </button>
             </div>
-          )}
-          {response ? undefined : ( //response by default true, when we click the button turn false to hide all information and show text
+          ) : (
             <div
               style={{
                 color: 'green',

@@ -33,11 +33,7 @@ function Login() {
       setError("Login fields can't be empty.");
       return;
     }
-    // if (!username || !password) {
-    //   setError('Incorrect login details ');
-    //   return;
-    // } this is wrong
-    //setError('');
+
     try {
       const response = await fetchRequest(
         'http://localhost:3001/v1/auth/login',
@@ -52,8 +48,8 @@ function Login() {
       localStorage.setItem('authToken', response.access_token);
       navigate('/', { replace: true });
     } catch (e) {
-      console.log(e);
-    //verifica conditiile de login ca si username.trim. dupa ce indeplineste toate conditiile poti doar sa dai click, altfel ceva eroare
+      //console.log(e);
+      setError("login details wrong");
     }
   };
 
@@ -74,7 +70,7 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+        {error && <p>{error}</p>}
         <button
           className='credentialsLogin'
           onClick={loginHandler}>

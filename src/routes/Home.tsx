@@ -29,7 +29,7 @@ const Home: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    navigate('/login');
+    navigate('/login', {replace: true});
   };
 
   const handlerModalToggle = () => {

@@ -3,7 +3,7 @@ var mailTransporter = createTransport({
     service: 'gmail',
     auth: {
         user: 'verdestefan87@gmail.com',
-        pass: '', //deleted pass
+        pass: '', 
     },
 });
 var details = {
