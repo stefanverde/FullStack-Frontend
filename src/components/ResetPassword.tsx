@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import './componentsStyles/ResetPassword.css';
+import { useParams } from 'react-router-dom';
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [isValid, setIsValid] = useState(false);
   const [error, setError] = useState(false);
-  const resetPassword = () => {
+
+  const { id } = useParams();
+
+  const resetPassword = async () => {
     const passSpecialChar = /[!@#$%^&;<>.?~]/.test(newPassword);
 
     if (!passSpecialChar || newPassword.length < 6) {
@@ -21,6 +25,19 @@ const ResetPassword = () => {
       return;
     }
     setIsValid(true);
+
+    const result = await fetch(
+      `http://localhost:3001/v1/users/update-password/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password: newPassword,
+        }),
+      }
+    );
     // call backend cu id si pass now
   };
   return (

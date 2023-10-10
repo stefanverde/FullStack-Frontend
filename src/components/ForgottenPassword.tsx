@@ -10,7 +10,7 @@ function ForgottenPassword() {
 
   async function responseHandler() {
     try {
-      const response = await fetch('http://localhost:3001/v1/mail/ ', {
+      const response = await fetch('http://localhost:3001/v1/mail ', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

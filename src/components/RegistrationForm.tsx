@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../GlobalCSS/Global.css';
 import './componentsStyles/RegistrationForm.css';
 
@@ -13,14 +13,14 @@ function RegistrationForm() {
   });
 
   const [passwordError, setPasswordError] = useState('');
+  const navigate = useNavigate();
 
-
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handlePasswordChange = (e:any) => {
+  const handlePasswordChange = (e: any) => {
     const newPassword = e.target.value;
     const containsNumber = /\d/.test(newPassword);
     const containsSpecialCharacter = /[!@#$%^&;<>.?~]/.test(newPassword);
@@ -36,18 +36,20 @@ function RegistrationForm() {
     setFormData({ ...formData, password: newPassword });
   };
 
-  const handleRepeatPasswordChange = (e:any) => {
+  const handleRepeatPasswordChange = (e: any) => {
     const newRepeatPassword = e.target.value;
     setFormData({ ...formData, repeatPassword: newRepeatPassword });
   };
 
-  const submitForm = async () => {
-    if(formData.password !== formData.repeatPassword){
+  const submitForm = async (e: any) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.repeatPassword) {
       setPasswordError("Passwords don't match. ");
       return;
     }
 
-    const {repeatPassword, ...requestData} = formData;
+    const { repeatPassword, ...requestData } = formData;
     // console.log('formData', requestData);
 
     const result = await fetch('http://localhost:3001/v1/users/add', {
@@ -58,8 +60,16 @@ function RegistrationForm() {
       body: JSON.stringify(requestData),
     });
 
+    //redirect
+    navigate('/login', { replace: true });
     const json = await result.json();
     console.log(json);
+  };
+
+  const handleRepeatPasswordBlur = (e: any) => {
+    if (formData.password !== formData.repeatPassword) {
+      console.log('E GRESIT');
+    }
   };
 
   return (
@@ -102,16 +112,19 @@ function RegistrationForm() {
           placeholder='Repeat Password'
           value={formData.repeatPassword}
           onChange={handleRepeatPasswordChange}
+          onBlur={handleRepeatPasswordBlur}
         />
 
-        <button className='submit' onClick={submitForm}>
-          <Link to='/login' style={{ textDecoration: 'none', color: 'black' }}>
-            Submit Registration
-          </Link>
+        <button
+          className='submit'
+          onClick={async (event) => await submitForm(event)}>
+          Submit Registration
         </button>
 
         <button className='toMain'>
-          <Link to='/login' style={{ textDecoration: 'none', color: 'black' }}>
+          <Link
+            to='/login'
+            style={{ textDecoration: 'none', color: 'black' }}>
             Back to Login. &rarr;
           </Link>
         </button>
